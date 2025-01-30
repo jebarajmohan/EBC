@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Electricity Bill Calculator</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="style-layout2.css" />
+      </head>
+      <body class="layout1">
+        <div class="tab-container">
+          <div class="tab-buttons">
+            <button class="tab-button active" data-tab="calculator">
+              Bill Calculator
+            </button>
+            <button class="tab-button" data-tab="editor">Rate Editor</button>
+          </div>
+          <div class="layout-switcher">
+            <label for="layout-select">Select Layout:</label>
+            <select id="layout-select" onchange="switchLayout()">
+              <option value="layout1">Layout 1</option>
+              <option value="layout2">Layout 2</option>
+            </select>
+          </div>
+          <div class="tab-content" id="calculator-tab">
+            <h2>Bill Calculator</h2>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="previousReadingDate">Previous Reading Date:</label>
+                <input type="date" id="previousReadingDate" />
+              </div>
+              <div class="form-group">
+                <label for="previousReading">Previous Reading:</label>
+                <input type="number" id="previousReading" />
+              </div>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="nextBillingDateInput">Next Billing Date:</label>
+                <input type="date" id="nextBillingDateInput" />
+              </div>
+              <div class="form-group">
+                <label for="currentReading">Current Reading:</label>
+                <input type="number" id="currentReading" />
+              </div>
+            </div>
+            <div class="button-group">
+              <button onclick="calculateBill()">Calculate Bill</button>
+              <button onclick="clearForm()">Clear</button>
+            </div>
+            <p id="billAmount"></p>
+            <div id="billing-info">
+              <p><strong>Next Billing Date:</strong> <span id="nextBillingDate"></span></p>
+              <div class="chart-container">
+                <div class="meter-chart">
+                  <div class="meter-circle">
+                    <div class="meter-fill" id="daysRemainingMeter"></div>
+                    <div class="meter-text" id="daysRemainingText"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="billing-details">
+                <p><strong>Predicted Bill Amount (60th day):</strong> <span id="predictedBillAmount"></span></p>
+                <p><strong>Average Units Used Per Day:</strong> <span id="averageDailyUsage"></span></p>
+                <p><strong>Total Units Used:</strong> <span id="totalUnitsUsed"></span></p>
+                <p><strong>Predicted Units (60th day):</strong> <span id="predictedUnits"></span></p>
+              </div>
+            </div>
+            <div id="slab-calculation">
+              <h3>Slab-wise Calculation</h3>
+              <table class="slab-table" id="slabCalculationTable">
+                <thead>
+                  <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Units</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-content" id="editor-tab" style="display: none;">
+            <h2>Rate Editor</h2>
+            <h3>Slab 1 (Units up to 500)</h3>
+            <table class="rate-table" id="slab1-table">
+              <thead>
+                <tr>
+                  <th>Min Units</th>
+                  <th>Max Units</th>
+                  <th>Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="number" data-slab="slab1" data-index="0" data-field="min" value="1" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="0" data-field="max" value="100" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="0" data-field="rate" value="0" /></td>
+                </tr>
+                <tr>
+                  <td><input type="number" data-slab="slab1" data-index="1" data-field="min" value="101" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="1" data-field="max" value="400" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="1" data-field="rate" value="2.35" /></td>
+                </tr>
+                 <tr>
+                  <td><input type="number" data-slab="slab1" data-index="2" data-field="min" value="401" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="2" data-field="max" value="410" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="2" data-field="rate" value="6.3" /></td>
+                </tr>
+              </tbody>
+            </table>
+            <h3>Slab 2 (Units above 500)</h3>
+            <table class="rate-table" id="slab2-table">
+              <thead>
+                <tr>
+                  <th>Min Units</th>
+                  <th>Max Units</th>
+                  <th>Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="number" data-slab="slab2" data-index="0" data-field="min" value="1" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="0" data-field="max" value="100" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="0" data-field="rate" value="0" /></td>
+                </tr>
+                <tr>
+                  <td><input type="number" data-slab="slab2" data-index="1" data-field="min" value="101" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="1" data-field="max" value="400" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="1" data-field="rate" value="4.7" /></td>
+                </tr>
+                <tr>
+                  <td><input type="number" data-slab="slab2" data-index="2" data-field="min" value="401" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="2" data-field="max" value="500" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="2" data-field="rate" value="6.3" /></td>
+                </tr>
+                <tr>
+                  <td><input type="number" data-slab="slab2" data-index="3" data-field="min" value="501" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="3" data-field="max" value="600" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="3" data-field="rate" value="8.4" /></td>
+                </tr>
+                <tr>
+                  <td><input type="number" data-slab="slab2" data-index="4" data-field="min" value="601" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="4" data-field="max" value="800" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="4" data-field="rate" value="9.45" /></td>
+                </tr>
+                <tr>
+                  <td><input type="number" data-slab="slab2" data-index="5" data-field="min" value="801" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="5" data-field="max" value="1000" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="5" data-field="rate" value="10.5" /></td>
+                </tr>
+                <tr>
+                  <td><input type="number" data-slab="slab2" data-index="6" data-field="min" value="1001" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="6" data-field="max" value="Infinity" /></td>
+                  <td><input type="number" data-slab="slab2" data-index="6" data-field="rate" value="11.55" /></td>
+                </tr>
+              </tbody>
+            </table>
+            <button onclick="saveRates()">Save Rates</button>
+          </div>
+        </div>
+        <script src="script.js"></script>
+      </body>
+    </html>

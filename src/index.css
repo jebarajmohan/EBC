@@ -1,0 +1,65 @@
+body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    .tab-container {
+      margin-bottom: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
+    }
+
+    .tab-button {
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+
+    .tab-button.active {
+      background-color: #ddd;
+    }
+
+    .tab-content {
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .rate-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .rate-table th,
+    .rate-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .rate-table th {
+      background-color: #f0f0f0;
+    }
+
+    .rate-table input {
+      width: 80px;
+      padding: 5px;
+      text-align: center;
+    }
