@@ -26,22 +26,22 @@
             <h2>Bill Calculator</h2>
             <div class="form-group-row">
               <div class="form-group">
-                <label for="previousReadingDate">Previous Reading Date:</label>
-                <input type="date" id="previousReadingDate" />
-              </div>
-              <div class="form-group">
                 <label for="previousReading">Previous Reading:</label>
                 <input type="number" id="previousReading" />
+              </div>
+              <div class="form-group">
+                <label for="previousReadingDate">Previous Reading Date:</label>
+                <input type="date" id="previousReadingDate" />
               </div>
             </div>
             <div class="form-group-row">
               <div class="form-group">
-                <label for="nextBillingDateInput">Next Billing Date:</label>
-                <input type="date" id="nextBillingDateInput" />
-              </div>
-              <div class="form-group">
                 <label for="currentReading">Current Reading:</label>
                 <input type="number" id="currentReading" />
+              </div>
+              <div class="form-group">
+                <label for="nextBillingDateInput">Next Billing Date:</label>
+                <input type="date" id="nextBillingDateInput" />
               </div>
             </div>
             <div class="button-group">
@@ -50,20 +50,22 @@
             </div>
             <p id="billAmount"></p>
             <div id="billing-info">
-              <p><strong>Next Billing Date:</strong> <span id="nextBillingDate"></span></p>
-              <div class="chart-container">
-                <div class="meter-chart">
-                  <div class="meter-circle">
-                    <div class="meter-fill" id="daysRemainingMeter"></div>
-                    <div class="meter-text" id="daysRemainingText"></div>
-                  </div>
+              <div class="chart-container" id="chartContainer">
+                <div class="bar-chart">
+                  <div class="bar-fill" id="daysRemainingBar"></div>
+                  <div class="bar-text" id="daysRemainingText"></div>
                 </div>
               </div>
+              <p id="nextBillingDateContainer"><strong>Next Billing Date:</strong> <span id="nextBillingDate"></span></p>
               <div class="billing-details">
-                <p><strong>Predicted Bill Amount (60th day):</strong> <span id="predictedBillAmount"></span></p>
-                <p><strong>Average Units Used Per Day:</strong> <span id="averageDailyUsage"></span></p>
-                <p><strong>Total Units Used:</strong> <span id="totalUnitsUsed"></span></p>
-                <p><strong>Predicted Units (60th day):</strong> <span id="predictedUnits"></span></p>
+                <p>
+                  <strong>Predicted Units (60th day):</strong> <span id="predictedUnits"></span>
+                  <strong>Predicted Bill Amount (60th day):</strong> <span id="predictedBillAmount"></span>
+                </p>
+                 <p>
+                  <strong>Total Units Used:</strong> <span id="totalUnitsUsed"></span>
+                  <strong>Average Units Used Per Day:</strong> <span id="averageDailyUsage"></span>
+                </p>
               </div>
             </div>
             <div id="slab-calculation">
@@ -80,6 +82,14 @@
                 </thead>
                 <tbody>
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="2"><strong>Total</strong></td>
+                    <td id="totalUnits"></td>
+                    <td></td>
+                    <td id="totalAmount"></td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -102,13 +112,18 @@
                 </tr>
                 <tr>
                   <td><input type="number" data-slab="slab1" data-index="1" data-field="min" value="101" /></td>
-                  <td><input type="number" data-slab="slab1" data-index="1" data-field="max" value="400" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="1" data-field="max" value="200" /></td>
                   <td><input type="number" data-slab="slab1" data-index="1" data-field="rate" value="2.35" /></td>
                 </tr>
                  <tr>
-                  <td><input type="number" data-slab="slab1" data-index="2" data-field="min" value="401" /></td>
-                  <td><input type="number" data-slab="slab1" data-index="2" data-field="max" value="410" /></td>
-                  <td><input type="number" data-slab="slab1" data-index="2" data-field="rate" value="6.3" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="2" data-field="min" value="201" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="2" data-field="max" value="400" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="2" data-field="rate" value="0" /></td>
+                </tr>
+                 <tr>
+                  <td><input type="number" data-slab="slab1" data-index="3" data-field="min" value="401" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="3" data-field="max" value="500" /></td>
+                  <td><input type="number" data-slab="slab1" data-index="3" data-field="rate" value="2.35" /></td>
                 </tr>
               </tbody>
             </table>

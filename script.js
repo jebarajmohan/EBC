@@ -1,8 +1,9 @@
 const defaultSlabRates = {
       slab1: [
         { min: 1, max: 100, rate: 0, units: 100 },
-        { min: 101, max: 400, rate: 2.35, units: 300 },
-         { min: 401, max: 410, rate: 6.3, units: 10 },
+        { min: 101, max: 200, rate: 2.35, units: 100 },
+        { min: 201, max: 400, rate: 0, units: 200 },
+        { min: 401, max: 500, rate: 2.35, units: 100 },
       ],
       slab2: [
         { min: 1, max: 100, rate: 0, units: 100 },
@@ -26,24 +27,28 @@ const defaultSlabRates = {
       const currentReading = parseFloat(document.getElementById('currentReading').value);
       const billAmountDisplay = document.getElementById('billAmount');
       const nextBillingDateDisplay = document.getElementById('nextBillingDate');
-      const daysRemainingMeter = document.getElementById('daysRemainingMeter');
+      const daysRemainingBar = document.getElementById('daysRemainingBar');
       const daysRemainingText = document.getElementById('daysRemainingText');
       const predictedBillAmountDisplay = document.getElementById('predictedBillAmount');
       const averageDailyUsageDisplay = document.getElementById('averageDailyUsage');
       const totalUnitsUsedDisplay = document.getElementById('totalUnitsUsed');
       const predictedUnitsDisplay = document.getElementById('predictedUnits');
       const slabCalculationTableBody = document.querySelector('#slabCalculationTable tbody');
+      const chartContainer = document.getElementById('chartContainer');
+      const nextBillingDateContainer = document.getElementById('nextBillingDateContainer');
 
       if (!previousReadingDate || isNaN(previousReading) || isNaN(currentReading) || currentReading < previousReading) {
         billAmountDisplay.textContent = 'Please enter valid readings.';
         nextBillingDateDisplay.textContent = '';
-        daysRemainingMeter.style.backgroundImage = '';
+        daysRemainingBar.style.width = '0%';
         daysRemainingText.textContent = '';
         predictedBillAmountDisplay.textContent = '';
         averageDailyUsageDisplay.textContent = '';
         totalUnitsUsedDisplay.textContent = '';
         predictedUnitsDisplay.textContent = '';
         slabCalculationTableBody.innerHTML = '';
+        chartContainer.style.display = 'flex';
+        nextBillingDateContainer.style.display = 'block';
         return;
       }
 
@@ -51,6 +56,8 @@ const defaultSlabRates = {
       let amount = 0;
       let slabDetails = [];
       let remainingUnits = units;
+      let totalUnits = 0;
+      let totalAmount = 0;
 
       if (units <= 500) {
         for (const slab of slabRates.slab1) {
@@ -58,12 +65,14 @@ const defaultSlabRates = {
             const unitsInSlab = Math.min(remainingUnits, slab.units);
             const slabAmount = unitsInSlab * slab.rate;
             amount += slabAmount;
+            totalUnits += unitsInSlab;
+            totalAmount += slabAmount;
             slabDetails.push({
               from: slab.min,
               to: slab.max === Infinity ? 'Infinity' : slab.max,
               units: unitsInSlab,
               rate: slab.rate,
-              amount: slabAmount.toFixed(2),
+              amount: `₹${slabAmount.toFixed(2)}`,
             });
             remainingUnits -= unitsInSlab;
           }
@@ -74,19 +83,21 @@ const defaultSlabRates = {
             const unitsInSlab = Math.min(remainingUnits, slab.units);
             const slabAmount = unitsInSlab * slab.rate;
             amount += slabAmount;
+            totalUnits += unitsInSlab;
+            totalAmount += slabAmount;
             slabDetails.push({
               from: slab.min,
               to: slab.max === Infinity ? 'Infinity' : slab.max,
               units: unitsInSlab,
               rate: slab.rate,
-              amount: slabAmount.toFixed(2),
+              amount: `₹${slabAmount.toFixed(2)}`,
             });
             remainingUnits -= unitsInSlab;
           }
         }
       }
 
-      billAmountDisplay.textContent = `Bill Amount: ${amount.toFixed(2)}`;
+      billAmountDisplay.textContent = `Bill Amount: ₹${amount.toFixed(2)}`;
 
       // Calculate next billing date
       let nextDate;
@@ -104,13 +115,15 @@ const defaultSlabRates = {
       const timeDiff = nextDate.getTime() - today.getTime();
       const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-      if (daysRemaining > 0) {
-        const percentage = Math.max(0, Math.min(100, (daysRemaining / 60) * 100));
-        daysRemainingMeter.style.setProperty('--fill-percentage', `${percentage}%`);
-        daysRemainingText.textContent = `${daysRemaining} days`;
+      if (nextDate < today) {
+        chartContainer.style.display = 'none';
+        nextBillingDateContainer.style.display = 'none';
       } else {
-        daysRemainingMeter.style.backgroundImage = '';
-        daysRemainingText.textContent = 'Billing date passed';
+        chartContainer.style.display = 'flex';
+        nextBillingDateContainer.style.display = 'block';
+        const percentage = Math.max(0, Math.min(100, (daysRemaining / 60) * 100));
+        daysRemainingBar.style.width = `${percentage}%`;
+        daysRemainingText.textContent = `${daysRemaining} days`;
       }
 
       // Calculate daily usage
@@ -140,7 +153,7 @@ const defaultSlabRates = {
         }
       }
 
-      predictedBillAmountDisplay.textContent = predictedAmount.toFixed(2);
+      predictedBillAmountDisplay.textContent = `₹${predictedAmount.toFixed(2)}`;
       averageDailyUsageDisplay.textContent = dailyUsage.toFixed(2);
       totalUnitsUsedDisplay.textContent = units.toFixed(2);
       predictedUnitsDisplay.textContent = predictedUnits.toFixed(2);
@@ -158,6 +171,15 @@ const defaultSlabRates = {
         `;
         slabCalculationTableBody.appendChild(row);
       });
+
+      const totalRow = document.createElement('tr');
+      totalRow.innerHTML = `
+        <td colspan="2"><strong>Total</strong></td>
+        <td id="totalUnits">${totalUnits.toFixed(2)}</td>
+        <td></td>
+        <td id="totalAmount">₹${totalAmount.toFixed(2)}</td>
+      `;
+      slabCalculationTableBody.appendChild(totalRow);
     }
 
     function clearForm() {
@@ -174,6 +196,8 @@ const defaultSlabRates = {
       document.getElementById('totalUnitsUsed').textContent = '';
       document.getElementById('predictedUnits').textContent = '';
       document.querySelector('#slabCalculationTable tbody').innerHTML = '';
+      document.getElementById('chartContainer').style.display = 'flex';
+      document.getElementById('nextBillingDateContainer').style.display = 'block';
     }
 
     function saveRates() {
